@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Matrix Hearts</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
   <style>
     body { margin: 0; overflow: hidden; background: #000; }
     canvas { display: block; }
@@ -62,7 +63,7 @@
     class HeartBurst {
       constructor(x, y) {
         this.particles = [];
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 7; i++) {
           const angle = Math.random() * 2 * Math.PI;
           const speed = Math.random() * 2 + 1;
           this.particles.push({
@@ -80,9 +81,9 @@
           if (p.alpha > 0) {
             p.x += p.dx;
             p.y += p.dy;
-            p.alpha -= 0.02;
+            p.alpha -= 0.01;
             ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-            ctx.font = (fontSize / 2) + 'px serif';
+            ctx.font = '20px serif';
             ctx.fillText('I love you', p.x, p.y);
             this.done = false;
           }

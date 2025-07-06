@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matrix Hearts</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #000; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    const hearts = [];
+    const phrase = '❤';
+    const fontSize = 20;
+    const columns = [];
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      columns.length = 0;
+      const cols = Math.floor(width / fontSize);
+      for (let i = 0; i < cols; i++) {
+        columns[i] = Math.random() * height;
+      }
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = '#e00';
+      ctx.font = fontSize + 'px serif';
+      for (let i = 0; i < columns.length; i++) {
+        const x = i * fontSize;
+        const y = columns[i];
+        ctx.fillText(phrase, x, y);
+        if (y > height && Math.random() > 0.975) {
+          columns[i] = 0;
+        } else {
+          columns[i] += fontSize;
+        }
+      }
+
+      for (let i = hearts.length - 1; i >= 0; i--) {
+        const burst = hearts[i];
+        burst.update();
+        if (burst.done) hearts.splice(i, 1);
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    class HeartBurst {
+      constructor(x, y) {
+        this.particles = [];
+        for (let i = 0; i < 15; i++) {
+          const angle = Math.random() * 2 * Math.PI;
+          const speed = Math.random() * 2 + 1;
+          this.particles.push({
+            x, y,
+            dx: Math.cos(angle) * speed,
+            dy: Math.sin(angle) * speed,
+            alpha: 1
+          });
+        }
+        this.done = false;
+      }
+      update() {
+        this.done = true;
+        this.particles.forEach(p => {
+          if (p.alpha > 0) {
+            p.x += p.dx;
+            p.y += p.dy;
+            p.alpha -= 0.02;
+            ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+            ctx.font = (fontSize / 2) + 'px serif';
+            ctx.fillText('I love you', p.x, p.y);
+            this.done = false;
+          }
+        });
+      }
+    }
+
+    canvas.addEventListener('click', e => {
+      hearts.push(new HeartBurst(e.clientX, e.clientY));
+    });
+
+    draw();
+  </script>
+</body>
+</html>
